@@ -1,4 +1,4 @@
-name: macOS build
+name: macOS ARM64 build
 
 on:
   workflow_dispatch:
@@ -11,13 +11,18 @@ permissions:
 
 jobs:
   build-macos:
-    runs-on: macos-26-intel
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v7.1.0
         with:
           python-version: "3.9"
+
+      - name: Verify ARM64 runner
+        run: |
+          test "$(uname -m)" = "arm64"
+          python -c "import platform; assert platform.machine() == 'arm64', platform.machine()"
 
       - name: Install build dependencies
         run: |
@@ -33,6 +38,6 @@ jobs:
       - name: Upload DMG
         uses: actions/upload-artifact@v7
         with:
-          name: ComicTagger-macos-intel
+          name: ComicTagger-macos-arm64
           path: dist/binary/*.dmg
           if-no-files-found: error
