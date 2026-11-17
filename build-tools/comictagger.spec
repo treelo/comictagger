@@ -6,7 +6,7 @@ from comictaggerlib import ctversion
 
 enable_console = False
 block_cipher = None
-target_arch = "universal2" if platform.system() == "Darwin" else None
+target_arch = "arm64" if platform.system() == "Darwin" else None
 
 
 a = Analysis(
