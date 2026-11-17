@@ -1,4 +1,4 @@
-name: macOS ARM64 build
+name: macOS Universal2 build
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-macos:
-    runs-on: macos-15
+    runs-on: macos-26-intel
     steps:
       - uses: actions/checkout@v7
 
@@ -19,10 +19,9 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Verify ARM64 runner
+      - name: Verify Intel build host
         run: |
-          test "$(uname -m)" = "arm64"
-          python -c "import platform; assert platform.machine() == 'arm64', platform.machine()"
+          test "$(uname -m)" = "x86_64"
 
       - name: Install build dependencies
         run: |
@@ -35,9 +34,26 @@ jobs:
       - name: Build macOS application
         run: python -m tox -vv r -m build
 
+      - name: Verify universal2 app binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          app="dist/ComicTagger.app"
+          test -d "$app"
+          checked=0
+          while IFS= read -r -d '' binary; do
+            if [[ "$(file -b "$binary")" == *Mach-O* ]]; then
+              archs="$(lipo -archs "$binary")"
+              grep -qw x86_64 <<< "$archs"
+              grep -qw arm64 <<< "$archs"
+              checked=$((checked + 1))
+            fi
+          done < <(find "$app" -type f -print0)
+          test "$checked" -gt 0
+
       - name: Upload DMG
         uses: actions/upload-artifact@v7
         with:
-          name: ComicTagger-macos-arm64
+          name: ComicTagger-macos-universal2
           path: dist/binary/*.dmg
           if-no-files-found: error

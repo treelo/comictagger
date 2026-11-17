@@ -6,6 +6,7 @@ from comictaggerlib import ctversion
 
 enable_console = False
 block_cipher = None
+target_arch = "universal2" if platform.system() == "Darwin" else None
 
 
 a = Analysis(
@@ -65,7 +66,7 @@ exe = EXE(
     console=enable_console,
     disable_windowed_traceback=False,
     argv_emulation=False,
-    target_arch=None,
+    target_arch=target_arch,
     codesign_identity=None,
     entitlements_file=None,
     icon="windows/app.ico",
@@ -85,6 +86,7 @@ if platform.system() not in ["Windows"]:
         coll,
         name="ComicTagger.app",
         icon="mac/app.icns",
+        target_arch=target_arch,
         info_plist={
             "NSHighResolutionCapable": "True",
             "NSPrincipalClass": "NSApplication",
