@@ -136,6 +136,10 @@ def test_get_language_iso(value, result):
     assert result == comicapi.utils.get_language_iso(value)
 
 
+def test_languages():
+    assert comicapi.utils.languages()["en"] == "English"
+
+
 combine_values = [
     ("hello", "english", "en", "hello\nenglish"),
     ("hello en", "english", "en", "hello english"),
