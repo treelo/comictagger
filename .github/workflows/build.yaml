@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-26-intel
     steps:
       - uses: actions/checkout@v7
 
@@ -33,6 +33,6 @@ jobs:
       - name: Upload DMG
         uses: actions/upload-artifact@v7
         with:
-          name: ComicTagger-macos-arm64
+          name: ComicTagger-macos-intel
           path: dist/binary/*.dmg
           if-no-files-found: error
